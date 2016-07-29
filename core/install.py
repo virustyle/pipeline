@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import json
+import coreutils
 
 PIPECONF = open(os.path.join(os.getenv('PIPEDEV'), 'config/core.json'))
 PIPEJSON = json.load(PIPECONF)
@@ -28,13 +29,6 @@ class Install(object):
         self.projectDestination = os.path.join(PIPEJSON['SERVER_ROOT'], self.showName)
         shutil.copytree(showTemplate, self.projectDestination)
         
-class Object:
-    '''
-    '''
-    def to_JSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
-
 class ShowConfig(object):
     '''
     :parameter:
@@ -48,7 +42,7 @@ class ShowConfig(object):
     '''
     def __init__(self, longName, shortName, resolution=[1980,1080], 
         aspectRatio=1.77, proxy=None, cache='alembic'):
-        self.project = Object()
+        self.project = coreutils.JsonObject()
         self.project.resolution = resolution
         self.project.aspectRatio = aspectRatio
         self.project.proxy = proxy

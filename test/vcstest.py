@@ -6,19 +6,22 @@ from vcs import versionmanager
 ROOTPATH = "C:/vcstest"
 
 def createTestEnvironment():
-	if os.path.exists(ROOTPATH):
-		shutil.rmtree(ROOTPATH)
-	else:
-		os.mkdir(ROOTPATH)
+    if os.path.exists(ROOTPATH):
+        shutil.rmtree(ROOTPATH)
+        os.mkdir(ROOTPATH)
+    else:
+        os.mkdir(ROOTPATH)
 
 def removeTestEnvironment():
-	pass
+    pass
 
 def main():
-	createTestEnvironment()
-	vc = versionmanager(ROOTPATH)
-	vc.createversion()
+    # createTestEnvironment()
+    vc = versionmanager.VersionManager(ROOTPATH)
+    # print vc.getVersions()
+    # print vc.latestVersion
+    print vc.createVersion("hello")
 
 
 if __name__ == '__main__':
-	main()
+    main()
