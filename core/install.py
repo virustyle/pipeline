@@ -52,7 +52,8 @@ class ShowConfig(object):
 
     def create(self):
         projectBasePath = os.path.join(PIPEJSON['SERVER_ROOT'], self.project.shortName)
-        projectConfigPath = os.path.join(projectBasePath, 'config/project.json')
+        projectConfigPath = str(os.path.join(projectBasePath, 'config/project.json'))
+        print projectConfigPath
         openFile = open(projectConfigPath.replace('\\',"/"),'w')
         data = self.project.to_JSON()
         openFile.write(data)
@@ -63,10 +64,10 @@ class ShowConfig(object):
 def main():
     showName = raw_input("Show Name (same as show long name): ")
 
-    installObj = Install(showName)
-    installObj.copyStructure()
+    # installObj = Install(showName)
+    # installObj.copyStructure()
 
-    config = ShowConfig('beijingsafari','bsf')
+    config = ShowConfig('myproject','mpf')
     config.create()
 
 

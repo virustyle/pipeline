@@ -8,10 +8,11 @@ import exceptions
 class VersionManager(object):
     '''
     '''
-    def __init__(self, rootPath):
+    def __init__(self, rootPath, workspacePath):
         self.__rootPath = rootPath
+        self.__workspacePath = workspacePath
 
-    def createVersion(self, note):
+    def __createVersion(self, note):
         '''
         Creates a new version in the same root folder, creates version 1 if
         no other version exists
@@ -31,8 +32,27 @@ class VersionManager(object):
         vinfo.create(os.path.join(versionPath, "versionInfo.json"))
         return versionPath
 
-    def checkoutVersion(self, workspacePath):
-        pass
+    def checkOutVersion(self, version):
+        '''
+        Checks out the specified version to the workspace / sandbox mentioned.
+
+        '''
+        versionPath = os.path.join(self.__rootPath, str(version))
+        sourcePath = "{0}\\*".format(versionPath).replace('/',"\\")
+        destinationPath =  self.__workspacePath.replace('/',"\\")
+        cmd = "xcopy /Y {0} {1}".format(sourcePath, destinationPath)
+        os.system(cmd)
+
+    def checkInVersion(self, note, fileList=[]):
+        sourcePath = "{0}\\*".format(self.__workspacePath).replace('/','\\')
+        destinationPath = self.__createVersion(note)
+        destinationPath = destinationPath.replace('/','\\')
+        for eachFile in fileList:
+            if "versionInfo.json" in eachFile:
+                pass
+            else:
+                cmd = "xcopy /Y {0} {1}".format(eachFile, destinationPath)
+                os.system(cmd)
 
     def getVersions(self):
         '''
@@ -46,6 +66,18 @@ class VersionManager(object):
         else:
             return sorted([int(i) for i in versions])
 
+    def versionMetadata(self, version):
+        versionPath = os.path.join(self.__rootPath, str(version))
+        infoFile = open(os.path.join(versionPath, "versionInfo.json"))
+        infoData = json.load(infoFile)
+        return infoData
+
+    @property
+    def activeVersion(self):
+        infoFile = open(os.path.join(self.__workspacePath, "versionInfo.json"))
+        infoData = json.load(infoFile)
+        return infoData['versionid']
+
     @property
     def latestVersion(self):
         '''
@@ -54,30 +86,10 @@ class VersionManager(object):
             int
         '''
         version = self.getVersions()
-        print version
         if version is None:
             return None
         else:
             return version[-1]
-
-    def next(self):
-        '''
-        Returns next number if exists.
-        :Return:
-            path
-        '''
-        return None
-
-    def previous(self):
-        '''
-        Returns next number if exists.
-        :Return:
-            path
-        '''
-        return None
-
-    def __createInformationFile(self):
-        pass
 
 class VersionInfo(object):
     '''
@@ -91,10 +103,6 @@ class VersionInfo(object):
 
     def create(self, configFilePath):
         openFile = open(configFilePath,'w')
-        print self.info.versionid
-        print self.info.author
-        print self.info.comment
-        print self.info.timestamp
         data = self.info.to_JSON()
         openFile.write(data)
         openFile.close()

@@ -409,7 +409,7 @@ class Task(BaseEntity):
         versionEntity = Version(**version)
         return versionEntity
 
-    def createVersion(self, filePath, image=False, username=None):
+    def createVersion(self, filePath, versionName=None, username=None):
         '''
         Returns a specific Version entity based on task
             :Args:
@@ -440,13 +440,13 @@ class Task(BaseEntity):
         'sg_status_list':'opn'
         }
 
-        if image:
+        if os.path.isDir(filePath):
             data = {'sg_task':{'type':self.type,'id':self.id},
-            'sg_path_to_frames':filePath,
+            'sg_reviewfolder':filePath,
             'user':{'type':huser.type,'id':huser.id},
             'project':self.project,
             'entity':self.entity,
-            'code':fileName
+            'code':versionName
             }
         
         ver = sg.create('Version', data)
@@ -492,16 +492,6 @@ class Task(BaseEntity):
         return allUsers
 
     def createNote(self, message, taskTag=None, username=None, messageSubject=None):
-        '''
-        Creates a note entity and links it to the task object
-            :Args:
-                message (string): body of the note
-                taskTag (string): tags to be attached to the task
-                username (string): os login id
-                messageSubject (string): subject or a short liner for the note
-            :Returns:
-                Dict
-        '''
         if username is None:
             username = getpass.getuser()
 
@@ -577,16 +567,6 @@ class Version(BaseEntity):
         return allNotes
 
     def createNote(self, message, taskTag=None, username=None):
-         '''
-        Add a time log entry to specific task by user
-            :Args:
-                message (string): body of the note
-                taskTag (string): tags to be attached to the task
-                username (string): os login id
-                messageSubject (string): subject or a short liner for the note
-            :Returns:
-                Dict
-        '''
         if username is None:
             username = getpass.getuser()
 
