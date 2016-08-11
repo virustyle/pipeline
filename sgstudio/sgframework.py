@@ -54,6 +54,7 @@ class SgFrameWork(object):
 
         return artistList
 
+
 class BaseEntity(object):
     def __init__(self, entityType, id):
         self._entityType = entityType
@@ -89,6 +90,14 @@ class Project(BaseEntity):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
         super(Project, self).__init__(self.type, self.id)
+
+    def createAsset(self, assetName, assetType, assetDescription):
+        data = {'code':assetName,
+                'sg_asset_type':assetType,
+                'description':assetDescription,
+                'project':{'type':self._entityType,'id':self._id}}
+        assetDict = sg.create('Asset', data)
+        return Asset(**assetDict)
 
     def getShot(self, shotName):
         '''
