@@ -5,7 +5,6 @@ from sgstudio import sgframework
 from PySide import QtGui
 from PySide import QtCore
 
-
 SERVER_PATH = "https://pipetest.shotgunstudio.com"
 SCRIPT_NAME = 'info'
 SCRIPT_KEY = '90aea59877cebbb6445bf7e77f5d90a9663ff0ba45d5eebae168703a6ad98cd2'
@@ -32,16 +31,18 @@ class UserInterface(QtGui.QWidget):
         # self.projects = QtGui.QComboBox()
         # self.projects.addItem("Select Projects")
         self.taskLister = MovieTreeWidget(self)
-        self.taskLister.setColumnCount(6)
-        self.taskLister.setHeaderLabels(['Task Name', 'Asset', 'Status', 'Type',
+        self.taskLister.setColumnCount(5)
+        self.taskLister.setHeaderLabels(['Task Name', 'Asset', 'Status',
             'Start Date', 'Due Date'])
 
         self.taskVersion = MovieTreeWidget(self)
         self.taskVersion.setColumnCount(3)
         self.taskVersion.setHeaderLabels(['Version', 'Date', 'Author', 'Note'])
 
+        self.progressbar = QtGui.QProgressBar()        
+
         self.refreshButton = QtGui.QPushButton('Refresh')
-        self.submitButton = QtGui.QPushButton('Submit')
+        self.submitButton = QtGui.QPushButton('Check Out')
 
         vbox = QtGui.QVBoxLayout(self)
         # projectLayout = QtGui.QHBoxLayout()
@@ -64,6 +65,7 @@ class UserInterface(QtGui.QWidget):
         buttonLayout.addWidget(self.submitButton)
         # vbox.addLayout(projectLayout)
         vbox.addLayout(tasklayout)
+        vbox.addWidget(self.progressbar)
         vbox.addLayout(buttonLayout)
 
     def launch(self):
@@ -79,17 +81,18 @@ class AssetManager(UserInterface):
         self.statusJson = json.load(open(os.path.join(os.getenv('PIPEDEV'), 'config/statuses.json')))
         self.loadUserTasks()
 
-        # self.refreshButton.clicked.connect(self.loadUserTasks)
+        self.refreshButton.clicked.connect(self.loadUserTasks)
 
     def loadUserTasks(self):
+        self.taskLister.clear()
         projectObject = self.sgf.getProject(str(os.environ['PROJECT']))
         currentUser = getpass.getuser()
         userInfo = {'login':currentUser}
         huser = sgframework.HumanUser(**userInfo)
         allTasks = huser.getAllTasks(projectObject)
-
-        for task in allTasks:
-            # assetObject = sgframework.Asset(**task.entity)
+        self.progressbar.setRange(0,len(allTasks))
+        for index, task in enumerate(allTasks):
+            self.progressbar.setValue(index+1)
             if task.sg_status_list not in self.statusJson['approved']:
                 self.taskLister.addToTree([task.content, task.entity['name'], 
-                    task.sg_status_list])
+                    task.sg_status_list, task.start_date, task.due_date])
