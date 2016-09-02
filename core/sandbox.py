@@ -39,3 +39,6 @@ class SandBox(object):
 
 	def remove(self):
 		pass
+
+	def getRootPath(self):
+		pass

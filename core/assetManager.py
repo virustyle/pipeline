@@ -6,10 +6,15 @@ from sgstudio import sgframework
 from PySide import QtGui
 from PySide import QtCore
 from core import sandbox
+from core import pipeconfig
+reload(pipeconfig)
 
-SERVER_PATH = "https://pipetest.shotgunstudio.com"
-SCRIPT_NAME = 'info'
-SCRIPT_KEY = '90aea59877cebbb6445bf7e77f5d90a9663ff0ba45d5eebae168703a6ad98cd2'
+pconf = pipeconfig.PipeConfig()
+conf = pconf.shotgunKeys()['coretools']
+
+SERVER_PATH = conf['url']
+SCRIPT_NAME = conf['name']
+SCRIPT_KEY = conf['skey']
 
 class CustomTreeWidget(QtGui.QTreeWidget):
     def __init__(self,parent):
@@ -36,14 +41,21 @@ class UserInterface(QtGui.QWidget):
         namefonts.setPointSize(10)
 
         currentAssetLabel = QtGui.QLabel("Current Asset: ")
-        self.currentAssetNameLabel = QtGui.QLabel(str(os.environ['ASSETNAME']))
-        self.currentAssetNameLabel.setFont(namefonts)
         currentProjectLabel = QtGui.QLabel("Current Project: ")
-        self.currentProjectNameLabel = QtGui.QLabel(str(os.environ['PROJECT']))
-        self.currentProjectNameLabel.setFont(namefonts)
         currentDeptLabel = QtGui.QLabel("Current Department: ")
-        self.currentDeptNameLabel = QtGui.QLabel(str(os.environ['TASKSTEP']))
+        self.currentProjectNameLabel = QtGui.QLabel(str(os.environ['PROJECT']))
+
+        try:
+            self.currentAssetNameLabel = QtGui.QLabel(str(os.environ['ASSETNAME']))                                  
+            self.currentDeptNameLabel = QtGui.QLabel(str(os.environ['TASKSTEP']))
+        except KeyError:
+            self.currentAssetNameLabel = QtGui.QLabel(None)                        
+            self.currentDeptNameLabel = QtGui.QLabel(None)
+
+        self.currentAssetNameLabel.setFont(namefonts)
+        self.currentProjectNameLabel.setFont(namefonts)
         self.currentDeptNameLabel.setFont(namefonts)
+
 
         self.taskLister = CustomTreeWidget(self)
         self.taskLister.setSortingEnabled(True)
@@ -112,7 +124,7 @@ class AssetManager(UserInterface):
         os.environ["TASKSTEP"] = currentSelection.text(7)
         os.environ["ASSETTYPE"] = currentSelection.text(2)
         self.currentAssetNameLabel.setText(str(currentSelection.text(1)))
-        self.currentDeptNameLabel.setText(str(currentSelection.text(6)))
+        self.currentDeptNameLabel.setText(str(currentSelection.text(7)))
         sbox = sandbox.SandBox()
         currentAssetSandBox = sbox.getSandBox()
         if currentAssetSandBox is None:
