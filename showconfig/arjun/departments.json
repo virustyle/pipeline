@@ -1,0 +1,9 @@
+{
+	"animation":"anim",
+	"lighting":"light",
+	"surfacing":"surf",
+	"modeling":"mdl",
+	"rigging":"rig",
+	"effects":"fx",
+	"charactereffects":"cfx"
+}

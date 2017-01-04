@@ -1,0 +1,12 @@
+{
+	"in-progress":"ip",
+	"client-review":"cr",
+	"client-approved":"ca",
+	"lead-review":"lr",
+	"lead-approved":"la",
+	"cgsup-review":"sr",
+	"cgsup-approved":"sa",
+	"td-ticket":"tt",
+	"waiting":"wt",
+	"task-created":"tc"
+}

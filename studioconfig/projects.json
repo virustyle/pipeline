@@ -1,0 +1,24 @@
+{
+	"arjun":{
+			"name":"arjun",
+			"shortname":"arj",
+			"fullres":[1980,1080],
+			"fps":24,
+			"pixelaspect":1.0,
+			"deviceaspect":1.5,
+			"status":"active",
+			"mapdrive":"J:/",
+			"division":"3D"
+			},
+	"pratheesh":{
+			"name":"pratheesh",
+			"shortname":"prath",
+			"fullres":[720,576],
+			"fps":24,
+			"pixelaspect":1.0,
+			"deviceaspect":1.5,
+			"status":"disbale",
+			"mapdrive":"P:/",
+			"division":"2D"
+		}
+}
