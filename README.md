@@ -12,7 +12,6 @@
 * `export $PYTHONPATH=$PYTHONPATH:'E:/pipeline/root/dir'`
 
 ## Important Environment Variables in a project context
-* Assets
 `PROJECT`: Picks up the project context from this environment variable
 
 ## Overview 
